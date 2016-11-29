@@ -45,10 +45,17 @@ void c_gets(String string, int size)
 	// Aloca no máximo o passado por parametro size
 	int size_in = wcslen(buffer) <= size ? wcslen(buffer) : size;
 	
+	printf("tamanho: %d", size_in);
+	
 	// Faz a conversão
 	for(int i=0; i<size_in; i++)
 	{
 		*(string + i) = (int) buffer[i];
+	}
+	
+	if (size_in <= size)
+	{
+		*(string + size_in) = '\0';
 	}
 }
 
