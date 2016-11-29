@@ -1,14 +1,23 @@
+/**************************************************\
+ * Biblioteca para compatibilidade de codificação *
+ * Para Windows e Linux                           *
+ * ---------------------------------------------- *
+ * Autor: Carlos Roberto                          *
+ * Data: 29/11/2016                               *
+ * Link: https://goo.gl/AKwg6j                    *
+\**************************************************/
+
+/**
+ * Simula o tipo string com um ponteiro de char
+ */
+typedef char* String;
+
 #ifdef _WIN32 // Quando estiver em windows
 
 // Bibliotecas para windows
+#include <stdlib.h> 
 #include <fcntl.h>
 #include <io.h>
-
-/**
- * Define o tipo string como um wide char,
- * para usar codificação em caracteres especiais
- */
-typedef wchar_t* String;
 
 /**
  * Executa tarefas específicas do windows
@@ -24,24 +33,38 @@ void _start_compat()
 
 /**
  * Faz a leitura do stdin em wide char
+ * E converte para ponteiro de char
  */
-void c_gets(String string)
+void c_gets(String string, int size)
 {
-	wscanf(L"%[^\n]ls", string);
+	wchar_t *buffer;
+
+	wscanf(L"%[^\n]ls", buffer);
 	fflush(stdin);
+	
+	// Aloca no máximo o passado por parametro size
+	int size_in = wcslen(buffer) <= size ? wcslen(buffer) : size;
+	
+	// Faz a conversão
+	for(int i=0; i<size_in; i++)
+	{
+		*(string + i) = (int) buffer[i];
+	}
 }
 
 #elif __linux__ // Quando estiver em linux
 
-// Simula o tipo string com um ponteiro de char
-typedef char* String;
+/**
+ * Executa tarefas específicas do linux
+ */
+void _start_compat(){}
 
-// 
-void _start_compat();
-
-void c_gets(String string)
+/**
+ * Faz a leitura do stdin em char
+ */
+void c_gets(String string, int size)
 {
-	scanf("%[^\n]s", string);
+	scanf("%[^\n]", string);
 	fflush(stdin);
 }
 
@@ -49,8 +72,16 @@ void c_gets(String string)
 
 #include <locale.h>
 
+/**
+ * Inicia a biblioteca, de acordo com o locale inserido
+ */
 void start_compat (String locale)
 {
 	setlocale(LC_ALL, locale);
 	_start_compat();
+}
+
+String string_alloc(int size)
+{
+    return (String) malloc(sizeof(String) * size);
 }
