@@ -24,37 +24,37 @@ typedef char* String;
  */
 void _start_compat()
 {
-	// Troca a leitura da entrada para wide char
-	_setmode(_fileno(stdin), _O_WTEXT);
-	
-	// Limpa o buffer
-	fflush(stdin);
+    // Troca a leitura da entrada para wide char
+    _setmode(_fileno(stdin), _O_WTEXT);
+    
+    // Limpa o buffer
+    fflush(stdin);
 }
 
 /**
  * Faz a leitura do stdin em wide char
  * E converte para ponteiro de char
  */
-void c_gets(String string, int size)
+void c_gets(String str, int size)
 {
-	wchar_t *buffer;
+    wchar_t *buffer;
 
-	wscanf(L"%[^\n]ls", buffer);
-	fflush(stdin);
-	
-	// Aloca no máximo o passado por parametro size
-	int size_in = wcslen(buffer) <= size ? wcslen(buffer) : size;
-	
-	// Faz a conversão
-	for(int i=0; i<size_in; i++)
-	{
-		*(string + i) = (int) buffer[i];
-	}
-	
-	if (size_in <= size)
-	{
-		*(string + size_in) = '\0';
-	}
+    wscanf(L"%[^\n]ls", buffer);
+    fflush(stdin);
+    
+    // Aloca no máximo o passado por parametro size
+    int size_in = wcslen(buffer) <= size ? wcslen(buffer) : size;
+    
+    // Faz a conversão
+    for(int i=0; i<size_in; i++)
+    {
+        *(str + i) = (int) buffer[i];
+    }
+    
+    if (size_in <= size)
+    {
+        *(str + size_in) = '\0';
+    }
 }
 
 #elif __linux__ // Quando estiver em linux
@@ -67,10 +67,10 @@ void _start_compat(){}
 /**
  * Faz a leitura do stdin em char
  */
-void c_gets(String string, int size)
+void c_gets(String str, int size)
 {
-	scanf("%[^\n]", string);
-	fflush(stdin);
+    scanf("%[^\n]", str);
+    fflush(stdin);
 }
 
 #endif
@@ -82,8 +82,8 @@ void c_gets(String string, int size)
  */
 void start_compat (String locale)
 {
-	setlocale(LC_ALL, locale);
-	_start_compat();
+    setlocale(LC_ALL, locale);
+    _start_compat();
 }
 
 String string_alloc(int size)
