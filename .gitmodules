@@ -1,0 +1,3 @@
+[submodule "fibonacci-sequence"]
+	path = fibonacci-sequence
+	url = git@github.com:carlosroberto555/fibonacci-sequence.git
